@@ -42,16 +42,21 @@ pipeline {
         }
       }
     }
-    stage('Build') {
-      steps {
-        sh(script: 'dotnet build --configuration Release', returnStdout: true)
-      }
-    }
-    stage('Test') {
-      steps {
-        sh(script: 'dotnet test -l:trx')
-        mstest(testResultsFile: '**/*.trx', failOnError: false, keepLongStdio: true)
-      }
-    }
+    stage('Build') { 
+	  steps {
+		script { 
+			def dotnetHome = tool 'dotnet'
+			sh "${dotnetHome}/dotnet build"
+		}
+	  }
+	}
+	stage('Test') {
+	  steps {
+		script {
+			def dotnetHome = tool 'dotnet'
+			sh "${dotnetHome}/dotnet test"
+		}
+	  }
+	}
   }
 }
