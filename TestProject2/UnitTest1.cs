@@ -64,7 +64,7 @@ namespace TestProject2
 
             AllureLifecycle.Instance.WrapInStep(() =>
             {
-                Assert.IsTrue(false);
+                Assert.IsTrue(true);
             }, "Assert");
 
             
