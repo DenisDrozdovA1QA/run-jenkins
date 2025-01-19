@@ -37,11 +37,9 @@ pipeline {
 	}
 	stage('Running tests') {
 	  steps {
-		bat "dotnet test ${workspace}/TestProject2/TestProject2.csproj"
 		script {
-		  def dotnetHome = tool 'dotnet'
 		  catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-		    def dotnetHome = tool 'dotnet'
+		  	bat "dotnet test ${workspace}/TestProject2/TestProject2.csproj"
 		  }
 		}
 	  }        
