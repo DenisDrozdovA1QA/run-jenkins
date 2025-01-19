@@ -20,7 +20,8 @@ pipeline {
     }
     stage('Checkout') {
       steps {
-		git branch: 'https://github.com/DenisDrozdovA1QA/run-jenkins', credentialsId: 'ce87e8f3-386b-4044-9f8f-effdd94a11e8', url: 'main'
+		cleanWs()
+        git(url: automation_repository, branch: default_branch)
       }
     }
 	stage('Restore packages') {
