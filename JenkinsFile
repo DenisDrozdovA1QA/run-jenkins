@@ -32,10 +32,10 @@ pipeline {
 	}
 	stage('Build') {
 	  steps {
-		bat "dotnet build ${workspace}\\TestProject2.sln /nologo /p:configuration=\"release\" /t:clean;restore;rebuild"
+		bat "dotnet build ${workspace}\\TestProject2.sln /nologo /p:configuration=\"release\""
 	  }
 	}
-	stage('Running unit tests') {
+	stage('Running tests') {
 	  steps {
 		bat "dotnet test ${workspace}/TestProject2/TestProject2.csproj"
 	  }        
