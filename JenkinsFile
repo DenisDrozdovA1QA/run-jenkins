@@ -42,17 +42,6 @@ pipeline {
         }
       }
     }
-    stage('Dependencies') {
-      steps {
-        sh(script: 'dotnet restore')
-        // Save the dependencies that went into this build into an artifact. This allows you to review any builds for vulnerabilities later on.
-        sh(script: 'dotnet list package > dependencies.txt')
-        archiveArtifacts(artifacts: 'dependencies.txt', fingerprint: true)
-        // List any dependency updates.
-        sh(script: 'dotnet list package --outdated > dependencieupdates.txt')
-        archiveArtifacts(artifacts: 'dependencieupdates.txt', fingerprint: true)
-      }
-    }
     stage('Build') {
       steps {
         sh(script: 'dotnet build --configuration Release', returnStdout: true)
