@@ -1,23 +1,15 @@
+automation_repository = 'https://github.com/DenisDrozdovA1QA/run-jenkins'
+default_branch = 'main'
+
 pipeline {
-  // The following pipeline provides an opinionated template you can customize for your own needs.
-  // 
-  // Instructions for configuring the Octopus plugin can be found at
-  // https://octopus.com/docs/packaging-applications/build-servers/jenkins#configure-the-octopus-deploy-plugin
-  // 
-  // Get a trial Octopus instance from https://octopus.com/start
-  // 
-  // This pipeline requires the following plugins:
-  // * Pipeline Utility Steps Plugin: https://wiki.jenkins.io/display/JENKINS/Pipeline+Utility+Steps+Plugin
-  // * Git: https://plugins.jenkins.io/git/
-  // * Workflow Aggregator: https://plugins.jenkins.io/workflow-aggregator/
-  // * Octopus Deploy: https://plugins.jenkins.io/octopusdeploy/.
-  // * MSTest: https://plugins.jenkins.io/mstest/
+  
   parameters {
     // Parameters are only available after the first run. See https://issues.jenkins.io/browse/JENKINS-41929 for more details.
     string(defaultValue: 'Spaces-1', description: '', name: 'SpaceId', trim: true)
     string(defaultValue: 'run-jenkins', description: '', name: 'ProjectName', trim: true)
     string(defaultValue: 'Dev', description: '', name: 'EnvironmentName', trim: true)
     string(defaultValue: 'Octopus', description: '', name: 'ServerId', trim: true)
+	string(defaultValue: default_branch, description: 'Branch Name', name: 'BranchName', trim: true)
   }
   agent 'any'
   stages {
@@ -28,35 +20,23 @@ pipeline {
     }
     stage('Checkout') {
       steps {
-        // If this pipeline is saved as a Jenkinsfile in a git repo, the checkout stage can be deleted as
-        // Jenkins will check out the code for you.
-        script {
-            /*
-              This is from the Jenkins "Global Variable Reference" documentation:
-              SCM-specific variables such as GIT_COMMIT are not automatically defined as environment variables; rather you can use the return value of the checkout step.
-            */
-            def checkoutVars = checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/DenisDrozdovA1QA/run-jenkins.git']]])
-            env.GIT_URL = checkoutVars.GIT_URL
-            env.GIT_COMMIT = checkoutVars.GIT_COMMIT
-            env.GIT_BRANCH = checkoutVars.GIT_BRANCH
-        }
+		git branch: 'automation_repository', credentialsId: 'ce87e8f3-386b-4044-9f8f-effdd94a11e8', url: parameters[BranchName]
       }
     }
-    stage('Build') { 
+	stage('Restore packages') {
 	  steps {
-		script { 
-			def dotnetHome = tool 'dotnet'
-			sh "${dotnetHome}/dotnet build"
-		}
+		bat "dotnet restore ${workspace}\\TestProject2.sln"
 	  }
 	}
-	stage('Test') {
+	stage('Build') {
 	  steps {
-		script {
-			def dotnetHome = tool 'dotnet'
-			sh "${dotnetHome}/dotnet test"
-		}
+		bat "dotnet build ${workspace}\\TestProject2.sln /nologo /p:configuration=\"release\" /t:clean;restore;rebuild"
 	  }
+	}
+	stage('Running unit tests') {
+	  steps {
+		bat "dotnet test ${workspace}/TestProject2/TestProject2.csproj"
+	  }        
 	}
   }
 }
