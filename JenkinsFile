@@ -42,14 +42,18 @@ pipeline {
 	}
 	stage('Publish Allure Report') {
 	  steps {
-	    allure([
-	      includeProperties: false,
-          jdk: '',
-          properties: [],
-          reportBuildPolicy: 'ALWAYS',
-		  report: 'allure-report',
-		  results: [[path: "bin/Debug/net8.0/allure-results"]]
-		])
+	    script {
+		  ws('C:/ProgramData/Jenkins/.jenkins/workspace/Test_Pipeline/') {
+			  allure([
+				includeProperties: false,
+				jdk: '',
+				properties: [],
+				reportBuildPolicy: 'ALWAYS',
+				report: 'allure-report',
+				results: [[path: "TestProject2/bin/Debug/net8.0/allure-results"]]
+			  ])
+		  }
+		}
 	  }
 	}
   }
