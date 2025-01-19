@@ -44,8 +44,7 @@ pipeline {
 	  steps {
 	    allure([
 	      commandline: 'allure serve',
-		  configPath: 'path/to/config.yml',
-		  results: '/bin/Debug/net8.0/allure-results'
+		  results: [[path: "\\bin\\Debug\\net8.0\\allure-results"]]
 		])
 	  }
 	}
