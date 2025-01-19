@@ -32,8 +32,10 @@ pipeline {
 	}
 	stage('Build') {
 	  steps {
-	    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+	    script {
+		  catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
 			bat "dotnet build ${workspace}\\TestProject2.sln /nologo /p:configuration=\"release\""
+		  }
 		}
 	  }
 	}
