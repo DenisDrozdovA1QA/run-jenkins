@@ -1,5 +1,6 @@
 automation_repository = 'https://github.com/DenisDrozdovA1QA/run-jenkins'
 default_branch = 'main'
+my_workspace = 'my-workspace'
 
 pipeline {
   
@@ -38,6 +39,15 @@ pipeline {
 	  steps {
 		bat "dotnet test ${workspace}/TestProject2/TestProject2.csproj"
 	  }        
+	}
+	stage('Publish Allure Report') {
+	  steps {
+	    allure([
+	      commandline: 'allure serve',
+		  configPath: 'path/to/config.yml',
+		  results: '/bin/Debug/net8.0/allure-results'
+		])
+	  }
 	}
   }
 }
